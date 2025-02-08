@@ -1,5 +1,10 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+const { default: loginActions } = require('../tests/pom/object/loginActions');
+const { default: inventoryActions } = require('../tests/pom/object/inventoryActions');
+const { default: chartActions } = require('../tests/pom/object/chartActions');
+const { default: checkoutActions } = require('../tests/pom/object/checkoutActions');
+
 
 test('Test Case Login', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
@@ -61,4 +66,21 @@ test('Test Case Login', async ({ page }) => {
 
 
 
+});
+
+
+test('login with POM', async({ page }) => {
+    const loginObj = new loginActions(page);
+    await loginObj.goto();
+    await loginObj.InputLogin("standard_user", "secret_sauce");
+
+    const inventoryObj = new inventoryActions(page);
+    await inventoryObj.InventoryClick();
+
+    const chartObj = new chartActions(page);
+    await chartObj.chartClick();
+
+    const checkoutObj = new checkoutActions(page);
+    await checkoutObj.inputCheckoutForm();
+    
 });
