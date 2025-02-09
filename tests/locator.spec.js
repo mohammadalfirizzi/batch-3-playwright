@@ -1,5 +1,6 @@
 // @ts-check
-import { test, expect } from '@playwright/test';
+import { test, expect, request } from '@playwright/test';
+//import { request } from 'http';
 const { default: loginActions } = require('../tests/pom/object/loginActions');
 const { default: inventoryActions } = require('../tests/pom/object/inventoryActions');
 const { default: chartActions } = require('../tests/pom/object/chartActions');
@@ -83,4 +84,75 @@ test('login with POM', async({ page }) => {
     const checkoutObj = new checkoutActions(page);
     await checkoutObj.inputCheckoutForm();
     
+});
+
+
+test('contoh get', async ({ page }) => {
+    const apiContext = await request.newContext();
+    const res = await apiContext.get('https://reqres.in/api/users?page=2');
+    expect(res.status()).toBe(200);
+    const responseJSON = await res.json();
+    expect(responseJSON.page).toBe(2);
+    //expect(responseJSON).toHaveLength(5);
+});
+
+test('contoh post', async ({page}) => {
+    const apiContext = await request.newContext();
+    const postData = {
+        "name": "morpheus",
+        "job": "leader"
+    };
+    const res = await apiContext.post('https://reqres.in/api/users',{
+        data : postData
+    });
+    expect(res.status()).toBe(201);
+    const responseJSON = await res.json();
+    expect(responseJSON.name).toBe('morpheus');
+    expect(responseJSON.job).toBe('leader');
+    
+});
+
+test('contoh get single user', async ({ page }) => {
+    const apiContext = await request.newContext();
+    const res = await apiContext.get('https://reqres.in/api/users/2');
+    expect(res.status()).toBe(200);
+    const responseJSON = await res.json();
+    expect(responseJSON.data.id).toBe(2); 
+    expect(responseJSON.data.email).toBe('janet.weaver@reqres.in');
+});
+
+
+test('contoh post register', async ({ page }) => {
+    const apiContext = await request.newContext();
+    const postData ={
+        "email": "eve.holt@reqres.in",
+        "password": "pistol"
+    };
+    const res = await apiContext.post('https://reqres.in/api/users',{
+        data : postData
+    });
+    expect(res.status()).toBe(201);
+});
+
+
+test('contoh put update', async ({ page }) => {
+    const apiContext = await request.newContext();
+    const putData = {
+        "name": "morpheus",
+        "job": "zion resident"
+    };
+    const res = await apiContext.put('https://reqres.in/api/users/2',{
+        data : putData
+    });
+    expect(res.status()).toBe(200);
+    const responseJSON = await res.json();
+    expect(responseJSON.name).toBe('morpheus');
+    expect(responseJSON.job).toBe('zion resident');
+});
+
+
+test('contoh delete user', async ({ page }) => {
+    const apiContext = await request.newContext();
+    const res = await apiContext.delete('https://reqres.in/api/users/2');
+    expect(res.status()).toBe(204);
 });
